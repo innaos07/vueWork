@@ -132,20 +132,24 @@
   </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { getReadableDate, getImage } from '@/common/helpers'
-import { useTaskCardDate } from '@/common/composables'
-import TaskCardViewTicksList from '@/modules/tasks/components/TaskCardViewTicksList.vue'
-import TaskCardTags from '@/modules/tasks/components/TaskCardTags.vue'
-import TaskCardViewComments from '@/modules/tasks/components/TaskCardViewComments.vue'
-const router = useRouter()
-const route = useRoute()
-const props = defineProps({
-  tasks: {
-    type: Array,
-    required: true
-  }
+import { useTasksStore } from '@/store';
+
+import { computed, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { getReadableDate, getImage } from '@/common/helpers';
+import { useTaskCardDate } from '@/common/composables';
+import TaskCardViewTicksList from '@/modules/tasks/components/TaskCardViewTicksList.vue';
+import TaskCardTags from '@/modules/tasks/components/TaskCardTags.vue';
+import TaskCardViewComments from '@/modules/tasks/components/TaskCardViewComments.vue';
+
+const tasksStore = useTasksStore();
+
+const router = useRouter();
+const route = useRoute();
+
+
+const task = computed(() => {
+  return tasksStore.tasks.find(task => task.id == route.params.id)
 })
 const dialog = ref(null)
 onMounted(() => {
@@ -153,9 +157,7 @@ onMounted(() => {
   dialog.value.focus()
 })
 // Найдем задачу по id из массива задач
-const task = computed(() => {
-  return props.tasks.find(task => task.id == route.params.id )
-})
+
 console.log('task', route.params.id )
 const dueDate = computed(() => {
   return getReadableDate(task.value.dueDate || '')

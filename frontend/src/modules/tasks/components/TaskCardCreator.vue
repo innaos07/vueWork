@@ -192,6 +192,10 @@ import { useTaskCardDate } from '@/common/composables'
 import { cloneDeep } from 'lodash'
 import TaskCardCreatorTags from './TaskCardCreatorTags.vue'
 
+import { useTasksStore } from '@/store/tasks'
+
+const tasksStore = useTasksStore()
+
 // Функция для создания новых задач
 const createNewTask = () => ({
   userId: null,
@@ -224,13 +228,14 @@ const setEmptyValidations = () => ({
   }
 })
 const router = useRouter()
+
 const props = defineProps({
   taskToEdit: {
     type: Object,
     default: null
   }
 })
-const emits = defineEmits(['addTask', 'editTask', 'deleteTask'])
+// const emits = defineEmits(['addTask', 'editTask', 'deleteTask'])
 // Определяем если мы работаем над редактированием задачи или создаем новую
 const taskToWork = props.taskToEdit ?
     cloneDeep(props.taskToEdit) :
@@ -245,6 +250,7 @@ watch(task, () => {
   isFormValid.value = true
   validations.value = setEmptyValidations()
 }, { deep: true })
+
 onMounted(() => {
   // Фокусируем на диалоговом окне чтобы сработала клавиша esc без дополнительного клика на окне
   dialog.value.focus()
@@ -254,10 +260,11 @@ function closeDialog () {
   router.push('/')
 }
 function deleteTask () {
-  emits('deleteTask', task.value.id)
+  tasksStore.deleteTask(task.value.id)
   router.push('/')
 }
 function setStatus (status) {
+  console.log('status', status)
   const [key] = Object.entries(taskStatuses)
       .find(([_, value]) => value === status)
   const taskStatus = task.value.statusId
@@ -272,6 +279,7 @@ function createTick () {
 }
 // Используем uuid для новых подзадач, id для существующих
 function updateTick (tick) {
+  console.log('tick',tick)
   const index = task.value.ticks
       .findIndex(({ uuid, id }) => {
         if (uuid) {
@@ -295,6 +303,7 @@ function removeTick ({ uuid, id }) {
   }
 }
 function setTags (tags) {
+  console.log('tags', tags)
   task.value.tags = tags
 }
 function submit () {
@@ -305,10 +314,10 @@ function submit () {
   }
   if (props.taskToEdit) {
     // Редактируемая задача
-    emits('editTask', task.value)
+    tasksStore.editTask(task.value)
   } else {
     // Новая задача
-    emits('addTask', task.value)
+    tasksStore.addTask(task.value)
   }
   // Переход на главную страницу
   router.push('/')

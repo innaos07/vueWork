@@ -1,5 +1,4 @@
 <template>
-
       <div class="link_container">
     <router-link class="link" to="/">В меню</router-link>
   </div>

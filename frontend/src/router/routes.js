@@ -1,6 +1,7 @@
 import HomeView from '@/views/HomeView.vue';
 import TaskView from '@/views/TaskView.vue';
 import TaskCreate from '@/views/TaskCreate.vue';
+import TaskEdit from '@/views/TaskEdit.vue';
 
 export default [
 	{
@@ -20,7 +21,14 @@ export default [
 				name: 'TaskCreate',
 				component: TaskCreate,
 				meta: { layout: 'AppLayoutMain' }
+			},
+			{
+				path: '/tasks/edit/:id',
+				name: 'TaskEdit',
+				component: TaskEdit,
+				meta: { layout: 'AppLayoutMain' }
 			}
+	
 		]
 	},
 ]
